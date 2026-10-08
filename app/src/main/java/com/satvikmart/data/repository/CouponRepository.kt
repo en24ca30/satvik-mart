@@ -1,36 +1,53 @@
 package com.satvikmart.data.repository
 
 import com.satvikmart.data.database.AppDatabase
-import com.satvikmart.data.database.entity.CouponEntity
-import com.satvikmart.data.model.Coupon
+import com.satvikmart.data.database.entity.CartItemEntity
+import com.satvikmart.data.model.CartItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.util.UUID
 
-class CouponRepository(private val db: AppDatabase) {
-    fun getActiveCoupons(): Flow<List<Coupon>> =
-        db.couponDao().getActiveCoupons().map { entities ->
-            entities.map { it.toCoupon() }
+class CartRepository(private val db: AppDatabase) {
+    fun getAllCartItems(): Flow<List<CartItem>> = db.cartDao().getAllCartItems().map { it.map(CartItemEntity::toModel) }
+    fun getCartItemCount(): Flow<Int> = db.cartDao().getCartItemCount()
+
+    suspend fun addToCart(productId: String, productName: String, price: Double, imageUrl: String, quantity: Int = 1) {
+        val existing = db.cartDao().getCartItem(productId)
+        if (existing != null) {
+            db.cartDao().updateCartItem(existing.copy(quantity = existing.quantity + quantity))
+        } else {
+            db.cartDao().insertCartItem(
+                CartItemEntity(
+                    id = UUID.randomUUID().toString(),
+                    productId = productId,
+                    productName = productName,
+                    price = price,
+                    quantity = quantity,
+                    imageUrl = imageUrl
+                )
+            )
         }
-
-    suspend fun getCouponByCode(code: String): Coupon? =
-        db.couponDao().getCouponByCode(code)?.toCoupon()
-
-    suspend fun validateCoupon(code: String, cartTotal: Double): Pair<Boolean, String> {
-        val coupon = db.couponDao().getCouponByCode(code) ?: return Pair(false, "Coupon not found")
-        if (!coupon.isActive) return Pair(false, "Coupon is expired")
-        if (cartTotal < coupon.minOrderValue) return Pair(false, "Minimum order value not met")
-        return Pair(true, "Coupon applied successfully")
     }
 
-    private fun CouponEntity.toCoupon() = Coupon(
+    suspend fun updateQuantity(productId: String, quantity: Int) {
+        val item = db.cartDao().getCartItem(productId) ?: return
+        if (quantity <= 0) db.cartDao().deleteCartItem(item)
+        else db.cartDao().updateCartItem(item.copy(quantity = quantity))
+    }
+
+    suspend fun removeFromCart(productId: String) {
+        val item = db.cartDao().getCartItem(productId) ?: return
+        db.cartDao().deleteCartItem(item)
+    }
+
+    suspend fun clearCart() = db.cartDao().clearCart()
+
+    private fun CartItemEntity.toModel() = CartItem(
         id = id,
-        code = code,
-        discountValue = discountValue,
-        discountType = discountType,
-        minOrderValue = minOrderValue,
-        maxDiscount = maxDiscount,
-        expiryDate = expiryDate,
-        isActive = isActive,
-        description = description
+        productId = productId,
+        productName = productName,
+        price = price,
+        quantity = quantity,
+        imageUrl = imageUrl
     )
 }

@@ -1,67 +1,37 @@
 package com.satvikmart.data.repository
 
 import com.satvikmart.data.database.AppDatabase
-import com.satvikmart.data.database.entity.CartItemEntity
-import com.satvikmart.data.model.CartItem
+import com.satvikmart.data.database.entity.ProductEntity
+import com.satvikmart.data.model.Product
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.util.UUID
 
-class CartRepository(private val db: AppDatabase) {
-    fun getAllCartItems(): Flow<List<CartItem>> =
-        db.cartDao().getAllCartItems().map { entities ->
-            entities.map { it.toCartItem() }
-        }
+class ProductRepository(private val db: AppDatabase) {
+    fun getAllProducts(): Flow<List<Product>> = db.productDao().getAllProducts().map { it.map(ProductEntity::toModel) }
+    fun getProductsByCategory(category: String): Flow<List<Product>> = db.productDao().getProductsByCategory(category).map { it.map(ProductEntity::toModel) }
+    fun getBestsellers(): Flow<List<Product>> = db.productDao().getBestsellerProducts().map { it.map(ProductEntity::toModel) }
+    fun getFeatured(): Flow<List<Product>> = db.productDao().getFeaturedProducts().map { it.map(ProductEntity::toModel) }
+    fun search(query: String): Flow<List<Product>> = db.productDao().searchProducts(query).map { it.map(ProductEntity::toModel) }
+    suspend fun getProductById(productId: String): Product? = db.productDao().getProductById(productId)?.toModel()
 
-    fun getCartItemCount(): Flow<Int> = db.cartDao().getCartItemCount()
-
-    suspend fun addToCart(productId: String, productName: String, price: Double, imageUrl: String, quantity: Int = 1) {
-        val existingItem = db.cartDao().getCartItem(productId)
-        if (existingItem != null) {
-            val updated = existingItem.copy(quantity = existingItem.quantity + quantity)
-            db.cartDao().updateCartItem(updated)
-        } else {
-            val cartItem = CartItemEntity(
-                id = UUID.randomUUID().toString(),
-                productId = productId,
-                productName = productName,
-                price = price,
-                quantity = quantity,
-                imageUrl = imageUrl
-            )
-            db.cartDao().insertCartItem(cartItem)
-        }
-    }
-
-    suspend fun removeFromCart(productId: String) {
-        val item = db.cartDao().getCartItem(productId)
-        if (item != null) {
-            db.cartDao().deleteCartItem(item)
-        }
-    }
-
-    suspend fun updateCartItemQuantity(productId: String, quantity: Int) {
-        val item = db.cartDao().getCartItem(productId)
-        if (item != null) {
-            if (quantity <= 0) {
-                db.cartDao().deleteCartItem(item)
-            } else {
-                db.cartDao().updateCartItem(item.copy(quantity = quantity))
-            }
-        }
-    }
-
-    suspend fun clearCart() {
-        db.cartDao().clearCart()
-    }
-
-    private fun CartItemEntity.toCartItem() = CartItem(
+    private fun ProductEntity.toModel() = Product(
         id = id,
-        productId = productId,
-        productName = productName,
-        price = price,
-        quantity = quantity,
+        name = name,
+        brand = brand,
+        category = category,
+        subcategory = subcategory,
+        description = description,
+        mrp = mrp,
+        sellingPrice = sellingPrice,
+        discount = discount,
+        unit = unit,
+        weight = weight,
+        stock = stock,
+        rating = rating,
+        reviewCount = reviewCount,
         imageUrl = imageUrl,
-        addedAt = addedAt
+        isBestseller = isBestseller,
+        isFeatured = isFeatured,
+        tags = tags.split(",").filter { it.isNotBlank() }
     )
 }

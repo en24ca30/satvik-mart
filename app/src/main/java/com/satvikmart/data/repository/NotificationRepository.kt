@@ -1,36 +1,30 @@
 package com.satvikmart.data.repository
 
 import com.satvikmart.data.database.AppDatabase
-import com.satvikmart.data.database.entity.NotificationEntity
+import com.satvikmart.data.database.entity.UserEntity
+import com.satvikmart.data.model.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.util.UUID
 
-class NotificationRepository(private val db: AppDatabase) {
-    fun getAllNotifications(): Flow<List<NotificationEntity>> =
-        db.notificationDao().getAllNotifications()
-
-    fun getUnreadCount(): Flow<Int> = db.notificationDao().getUnreadCount()
-
-    suspend fun addNotification(
-        title: String,
-        message: String,
-        type: String,
-        relatedOrderId: String? = null
-    ) {
-        val notification = NotificationEntity(
-            id = UUID.randomUUID().toString(),
-            title = title,
-            message = message,
-            type = type,
-            isRead = false,
-            createdAt = System.currentTimeMillis(),
-            relatedOrderId = relatedOrderId
+class UserRepository(private val db: AppDatabase) {
+    fun getUser(): Flow<User?> = db.userDao().getUser().map { it?.toModel() }
+    suspend fun updateUser(user: User) {
+        db.userDao().updateUser(
+            UserEntity(
+                id = user.id,
+                name = user.name,
+                mobile = user.mobile,
+                email = user.email,
+                isLoggedIn = user.isLoggedIn
+            )
         )
-        db.notificationDao().insertNotification(notification)
     }
 
-    suspend fun markAsRead(notificationId: String) {
-        // In a real app, you'd fetch and update
-    }
+    private fun UserEntity.toModel() = User(
+        id = id,
+        name = name,
+        mobile = mobile,
+        email = email,
+        isLoggedIn = isLoggedIn
+    )
 }

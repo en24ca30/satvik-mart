@@ -1,22 +1,23 @@
-package com.satvikmart.data.model
+package com.satvikmart.data.database.dao
 
-data class Product(
-    val id: String,
-    val name: String,
-    val brand: String,
-    val category: String,
-    val subcategory: String,
-    val description: String,
-    val mrp: Double,
-    val sellingPrice: Double,
-    val discount: Int,
-    val unit: String,
-    val weight: String,
-    val stock: Int,
-    val rating: Float,
-    val reviewCount: Int,
-    val imageUrl: String,
-    val isBestseller: Boolean = false,
-    val isFeatured: Boolean = false,
-    val tags: List<String> = emptyList()
-)
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Update
+import com.satvikmart.data.database.entity.NotificationEntity
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface NotificationDao {
+    @Insert
+    suspend fun insertNotification(notification: NotificationEntity)
+
+    @Update
+    suspend fun updateNotification(notification: NotificationEntity)
+
+    @Query("SELECT * FROM notifications ORDER BY createdAt DESC")
+    fun getAllNotifications(): Flow<List<NotificationEntity>>
+
+    @Query("SELECT COUNT(*) FROM notifications WHERE isRead = 0")
+    fun getUnreadCount(): Flow<Int>
+}

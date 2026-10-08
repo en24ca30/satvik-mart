@@ -4,20 +4,20 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.satvikmart.data.database.entity.NotificationEntity
+import com.satvikmart.data.database.entity.UserEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface NotificationDao {
+interface UserDao {
     @Insert
-    suspend fun insertNotification(notification: NotificationEntity)
+    suspend fun insertUser(user: UserEntity)
 
     @Update
-    suspend fun updateNotification(notification: NotificationEntity)
+    suspend fun updateUser(user: UserEntity)
 
-    @Query("SELECT * FROM notifications ORDER BY createdAt DESC")
-    fun getAllNotifications(): Flow<List<NotificationEntity>>
+    @Query("SELECT * FROM users WHERE id = '1'")
+    fun getUser(): Flow<UserEntity?>
 
-    @Query("SELECT COUNT(*) FROM notifications WHERE isRead = 0")
-    fun getUnreadCount(): Flow<Int>
+    @Query("SELECT * FROM users WHERE id = '1'")
+    suspend fun getUserOnce(): UserEntity?
 }

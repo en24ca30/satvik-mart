@@ -1,33 +1,31 @@
 package com.satvikmart.data.database.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Update
-import com.satvikmart.data.database.entity.CartItemEntity
+import com.satvikmart.data.database.entity.ProductEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface CartDao {
+interface ProductDao {
     @Insert
-    suspend fun insertCartItem(cartItem: CartItemEntity)
+    suspend fun insertAll(products: List<ProductEntity>)
 
-    @Update
-    suspend fun updateCartItem(cartItem: CartItemEntity)
+    @Query("SELECT * FROM products")
+    fun getAllProducts(): Flow<List<ProductEntity>>
 
-    @Delete
-    suspend fun deleteCartItem(cartItem: CartItemEntity)
+    @Query("SELECT * FROM products WHERE id = :productId")
+    suspend fun getProductById(productId: String): ProductEntity?
 
-    @Query("SELECT * FROM cart_items")
-    fun getAllCartItems(): Flow<List<CartItemEntity>>
+    @Query("SELECT * FROM products WHERE category = :category")
+    fun getProductsByCategory(category: String): Flow<List<ProductEntity>>
 
-    @Query("SELECT * FROM cart_items WHERE productId = :productId")
-    suspend fun getCartItem(productId: String): CartItemEntity?
+    @Query("SELECT * FROM products WHERE isBestseller = 1")
+    fun getBestsellerProducts(): Flow<List<ProductEntity>>
 
-    @Query("DELETE FROM cart_items")
-    suspend fun clearCart()
+    @Query("SELECT * FROM products WHERE isFeatured = 1")
+    fun getFeaturedProducts(): Flow<List<ProductEntity>>
 
-    @Query("SELECT COUNT(*) FROM cart_items")
-    fun getCartItemCount(): Flow<Int>
+    @Query("SELECT * FROM products WHERE name LIKE '%' || :query || '%' OR tags LIKE '%' || :query || '%'")
+    fun searchProducts(query: String): Flow<List<ProductEntity>>
 }

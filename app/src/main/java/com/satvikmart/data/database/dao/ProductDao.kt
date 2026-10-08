@@ -1,37 +1,14 @@
-package com.satvikmart.data.database.dao
+package com.satvikmart.data.database.entity
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import com.satvikmart.data.database.entity.ProductEntity
-import kotlinx.coroutines.flow.Flow
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-@Dao
-interface ProductDao {
-    @Insert
-    suspend fun insertAll(products: List<ProductEntity>)
-
-    @Query("SELECT * FROM products")
-    fun getAllProducts(): Flow<List<ProductEntity>>
-
-    @Query("SELECT * FROM products WHERE id = :productId")
-    suspend fun getProductById(productId: String): ProductEntity?
-
-    @Query("SELECT * FROM products WHERE category = :category")
-    fun getProductsByCategory(category: String): Flow<List<ProductEntity>>
-
-    @Query("SELECT * FROM products WHERE isBestseller = 1")
-    fun getBestsellerProducts(): Flow<List<ProductEntity>>
-
-    @Query("SELECT * FROM products WHERE isFeatured = 1 LIMIT 10")
-    fun getFeaturedProducts(): Flow<List<ProductEntity>>
-
-    @Query("SELECT * FROM products WHERE name LIKE '%' || :query || '%' OR tags LIKE '%' || :query || '%'")
-    fun searchProducts(query: String): Flow<List<ProductEntity>>
-
-    @Query("SELECT DISTINCT category FROM products ORDER BY category")
-    fun getAllCategories(): Flow<List<String>>
-
-    @Query("DELETE FROM products")
-    suspend fun deleteAll()
-}
+@Entity(tableName = "notifications")
+data class NotificationEntity(
+    @PrimaryKey val id: String,
+    val title: String,
+    val message: String,
+    val type: String,
+    val isRead: Boolean = false,
+    val createdAt: Long = System.currentTimeMillis()
+)

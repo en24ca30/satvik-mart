@@ -1,0 +1,25 @@
+package com.satvikmart.ui.navigation
+
+object NavDestinations {
+    const val SPLASH = "splash"
+    const val LOGIN = "login"
+    const val OTP = "otp"
+    const val HOME = "home"
+    const val CATEGORIES = "categories"
+    const val CATEGORY_DETAIL = "category_detail"
+    const val SEARCH = "search"
+    const val PRODUCT_DETAILS = "product_details"
+    const val CART = "cart"
+    const val CHECKOUT = "checkout"
+    const val ADDRESS_SELECTION = "address_selection"
+    const val ADD_ADDRESS = "add_address"
+    const val PAYMENT_METHOD = "payment_method"
+    const val UPI_QR = "upi_qr"
+    const val ORDER_CONFIRMATION = "order_confirmation"
+    const val ORDER_TRACKING = "order_tracking"
+    const val ORDER_HISTORY = "order_history"
+    const val PROFILE = "profile"
+    const val WISHLIST = "wishlist"
+    const val NOTIFICATIONS = "notifications"
+    const val SETTINGS = "settings"
+}

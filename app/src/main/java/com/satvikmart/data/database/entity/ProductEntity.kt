@@ -1,27 +1,87 @@
-package com.satvikmart.data.database.entity
+package com.satvikmart.data.database
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import com.satvikmart.data.database.dao.AddressDao
+import com.satvikmart.data.database.dao.CartDao
+import com.satvikmart.data.database.dao.CouponDao
+import com.satvikmart.data.database.dao.NotificationDao
+import com.satvikmart.data.database.dao.ProductDao
+import com.satvikmart.data.database.dao.UserDao
+import com.satvikmart.data.database.entity.AddressEntity
+import com.satvikmart.data.database.entity.CartItemEntity
+import com.satvikmart.data.database.entity.CouponEntity
+import com.satvikmart.data.database.entity.NotificationEntity
+import com.satvikmart.data.database.entity.ProductEntity
+import com.satvikmart.data.database.entity.UserEntity
+import com.satvikmart.util.SampleDataGenerator
+import kotlinx.coroutines.flow.first
 
-@Entity(tableName = "products")
-data class ProductEntity(
-    @PrimaryKey
-    val id: String,
-    val name: String,
-    val brand: String,
-    val category: String,
-    val subcategory: String,
-    val description: String,
-    val mrp: Double,
-    val sellingPrice: Double,
-    val discount: Int,
-    val unit: String,
-    val weight: String,
-    val stock: Int,
-    val rating: Float,
-    val reviewCount: Int,
-    val imageUrl: String,
-    val isBestseller: Boolean = false,
-    val isFeatured: Boolean = false,
-    val tags: String = ""
+@Database(
+    entities = [
+        ProductEntity::class,
+        CartItemEntity::class,
+        AddressEntity::class,
+        CouponEntity::class,
+        UserEntity::class,
+        NotificationEntity::class
+    ],
+    version = 1,
+    exportSchema = false
 )
+abstract class AppDatabase : RoomDatabase() {
+    abstract fun productDao(): ProductDao
+    abstract fun cartDao(): CartDao
+    abstract fun addressDao(): AddressDao
+    abstract fun couponDao(): CouponDao
+    abstract fun userDao(): UserDao
+    abstract fun notificationDao(): NotificationDao
+
+    suspend fun seedDatabase() {
+        val pDao = productDao()
+        val cDao = couponDao()
+        val uDao = userDao()
+
+        val products = pDao.getAllProducts().first()
+        if (products.isEmpty()) {
+            pDao.insertAll(SampleDataGenerator.generateProducts())
+        }
+
+        val coupons = cDao.getActiveCoupons().first()
+        if (coupons.isEmpty()) {
+            cDao.insertAll(SampleDataGenerator.generateCoupons())
+        }
+
+        val user = uDao.getUserOnce()
+        if (user == null) {
+            uDao.insertUser(
+                UserEntity(
+                    id = "1",
+                    name = "Demo User",
+                    mobile = "9999999999",
+                    email = "demo@satvikmart.com",
+                    isLoggedIn = true
+                )
+            )
+        }
+    }
+
+    companion object {
+        @Volatile
+        private var INSTANCE: AppDatabase? = null
+
+        fun getInstance(context: Context): AppDatabase {
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    AppDatabase::class.java,
+                    "satvikmart.db"
+                ).build()
+                INSTANCE = instance
+                instance
+            }
+        }
+    }
+}

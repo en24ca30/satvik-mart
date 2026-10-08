@@ -3,21 +3,17 @@ package com.satvikmart.data.database.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Update
-import com.satvikmart.data.database.entity.UserEntity
+import com.satvikmart.data.database.entity.CouponEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface UserDao {
+interface CouponDao {
     @Insert
-    suspend fun insertUser(user: UserEntity)
+    suspend fun insertAll(coupons: List<CouponEntity>)
 
-    @Update
-    suspend fun updateUser(user: UserEntity)
+    @Query("SELECT * FROM coupons WHERE isActive = 1")
+    fun getActiveCoupons(): Flow<List<CouponEntity>>
 
-    @Query("SELECT * FROM users WHERE id = '1'")
-    fun getUser(): Flow<UserEntity?>
-
-    @Query("SELECT * FROM users WHERE id = '1'")
-    suspend fun getUserOnce(): UserEntity?
+    @Query("SELECT * FROM coupons WHERE code = :code LIMIT 1")
+    suspend fun getCouponByCode(code: String): CouponEntity?
 }

@@ -1,39 +1,15 @@
-package com.satvikmart.ui.navigation
+package com.satvikmart.ui.theme
 
-object NavDestinations {
-    const val SPLASH = "splash"
-    const val LOGIN = "login"
-    const val OTP = "otp"
-    const val LOCATION = "location"
-    const val HOME = "home"
-    const val CATEGORIES = "categories"
-    const val CATEGORY_DETAIL = "category_detail"
-    const val SEARCH = "search"
-    const val PRODUCT_DETAILS = "product_details"
-    const val WISHLIST = "wishlist"
-    const val CART = "cart"
-    const val CHECKOUT = "checkout"
-    const val ADDRESS_SELECTION = "address_selection"
-    const val ADD_ADDRESS = "add_address"
-    const val PAYMENT_METHOD = "payment_method"
-    const val UPI_QR = "upi_qr"
-    const val UPI_PAYMENT = "upi_payment"
-    const val COD_PAYMENT = "cod_payment"
-    const val ORDER_CONFIRMATION = "order_confirmation"
-    const val ORDER_TRACKING = "order_tracking"
-    const val ORDER_HISTORY = "order_history"
-    const val ORDER_DETAILS = "order_details"
-    const val PROFILE = "profile"
-    const val EDIT_PROFILE = "edit_profile"
-    const val SAVED_ADDRESSES = "saved_addresses"
-    const val OFFERS = "offers"
-    const val COUPONS = "coupons"
-    const val NOTIFICATIONS = "notifications"
-    const val HELP = "help"
-    const val FAQ = "faq"
-    const val CONTACT_SUPPORT = "contact_support"
-    const val SETTINGS = "settings"
-    const val PRIVACY_POLICY = "privacy_policy"
-    const val TERMS_CONDITIONS = "terms_conditions"
-    const val ABOUT = "about"
-}
+import androidx.compose.material3.Typography
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+
+val SatvikMartTypography = Typography(
+    headlineLarge = TextStyle(fontFamily = FontFamily.Default, fontWeight = FontWeight.Bold, fontSize = 32.sp),
+    headlineMedium = TextStyle(fontFamily = FontFamily.Default, fontWeight = FontWeight.Bold, fontSize = 24.sp),
+    titleLarge = TextStyle(fontFamily = FontFamily.Default, fontWeight = FontWeight.SemiBold, fontSize = 20.sp),
+    bodyLarge = TextStyle(fontFamily = FontFamily.Default, fontSize = 16.sp),
+    bodyMedium = TextStyle(fontFamily = FontFamily.Default, fontSize = 14.sp)
+)

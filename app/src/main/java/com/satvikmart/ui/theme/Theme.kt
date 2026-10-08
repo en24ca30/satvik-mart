@@ -1,47 +1,15 @@
 package com.satvikmart.ui.theme
 
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.lightColorScheme
-import androidx.compose.runtime.Composable
-
-private val SatvikMartColorScheme = lightColorScheme(
-    primary = DeepGreen,
-    onPrimary = White,
-    primaryContainer = LightGreen,
-    onPrimaryContainer = DeepGreen,
-    secondary = SaffronOrange,
-    onSecondary = White,
-    secondaryContainer = Color(0xFFFFE0B2),
-    onSecondaryContainer = DeepOrange,
-    tertiary = FreshGreen,
-    onTertiary = White,
-    tertiaryContainer = LightGreen,
-    onTertiaryContainer = DeepGreen,
-    error = ErrorRed,
-    onError = White,
-    errorContainer = Color(0xFFFFCDD2),
-    onErrorContainer = ErrorRed,
-    background = WarmCream,
-    onBackground = Black,
-    surface = White,
-    onSurface = Black,
-    surfaceVariant = LightGray,
-    onSurfaceVariant = MediumGray,
-    outline = BorderGray,
-    outlineVariant = Color(0xFFCACACB),
-    scrim = Black.copy(alpha = 0.32f)
-)
-
-@Composable
-fun SatvikMartTheme(
-    content: @Composable () -> Unit
-) {
-    MaterialTheme(
-        colorScheme = SatvikMartColorScheme,
-        typography = SatvikMartTypography,
-        shapes = SatvikMartShapes,
-        content = content
-    )
-}
-
 import androidx.compose.ui.graphics.Color
+
+val DeepGreen = Color(0xFF1B5E20)
+val FreshGreen = Color(0xFF4CAF50)
+val WarmCream = Color(0xFFFFF8F0)
+val SaffronOrange = Color(0xFFFF9800)
+val White = Color(0xFFFFFFFF)
+val Black = Color(0xFF000000)
+val Gray = Color(0xFF757575)
+val LightGray = Color(0xFFF5F5F5)
+val BorderGray = Color(0xFFE0E0E0)
+val SuccessGreen = Color(0xFF2E7D32)
+val ErrorRed = Color(0xFFD32F2F)
